@@ -1,0 +1,107 @@
+{
+	"navbar": {
+		"home": "Accueil",
+		"login": "Connexion",
+		"language": "Langue"
+	},
+	"sidebar":{
+		"home":"Accueil",
+		"tournaments":"Tournois",
+		"messages":"Messages",
+		"games":"Jeux",
+		"settings":"Paramètres"
+	},
+	"pages":{
+		"dashboard":"Tableau de Bord",
+		"home":"Accueil",
+		"tournaments":"Tournois",
+		"messages":"Messages",
+		"games":"Jeux",
+		"settings":"Paramètres"
+	},
+	"profile": {
+		"id": "Id",
+		"email": "Email",
+		"username": "Nom d'utilisateur",
+		"status": "Statut",
+		"alias": "Pseudo",
+		"aliasbtn": "Définir un nouveau pseudo",
+		"quickactions": "Actions rapides",
+		"playerstats": {
+			"title": "Stats joueur",
+			"description": "Voir vos statistiques de jeu"
+		},
+		"matchstats": {
+			"title": "Stats des matchs",
+			"description": "Voir l'historique détaillé des matchs"
+		},
+		"logout": {
+			"title": "Déconnexion",
+			"description": "Se déconnecter de votre compte"
+		}
+	},	
+	"home": {
+		"title": "Découvrez le jeu classique avec 4 thèmes visuels uniques",
+		"inspiration": "Inspiré par l'esthétique japonaise traditionnelle avec des textures de papier washi et des éléments de design du torii.",
+		"japanese": "Zen japonais",
+		"pacman": "Arcade Pacman",
+		"arcade": "Arcade rétro",
+		"space": "Odyssée spatiale",
+		"play": "Jouer",
+		"settings": "Paramètres",
+		"theme": "Thème",
+		"active": "Jeux actifs"
+	},
+	"gamesettings": {
+		"head": "Paramètres du jeu",
+		"speed": {
+			"label": "Vitesse de la balle",
+			"slow": "lent",
+			"normal": "normal",
+			"fast": "rapide"
+		},
+		"canvashape": {
+			"label": "Forme du canevas",
+			"rectangle": "Rectangle",
+			"square": "Carré",
+			"wide": "Large"
+		},
+		"score": {
+			"label": "Score pour gagner",
+			"points": "Points"
+		},
+		"button": "Réinitialiser par défaut"
+	},
+	"gameselection":{
+		"title": "Sélectionner le mode de jeu",
+		"subtitle": "Choisissez comment vous voulez jouer",
+		"modes": {
+			"local": {
+				"title": "Jeu local",
+				"description": "Jouer localement avec des amis"
+			},
+			"online": {
+				"title": "Jeu en ligne",
+				"description": "Jouer contre des adversaires distants"
+			},
+			"cli": {
+				"title": "Ligne de commande",
+				"description": "Jouer via les commandes du terminal"
+			}
+		}
+	},
+	"tournamentselection":{
+		"title": "Options de tournoi",
+		"subtitle": "Choisissez ce que vous voulez accéder",
+		"modes": {
+			"events": {
+				"title": "Événements",
+				"description": "Voir et rejoindre les événements à venir"
+			},
+			"results": {
+				"title": "Résultats de tournoi",
+				"description": "Voir les résultats et classements des tournois passés"
+			}
+		}
+	}
+}

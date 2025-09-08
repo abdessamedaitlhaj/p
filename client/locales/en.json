@@ -1,0 +1,107 @@
+{
+	"navbar":{
+		"home":"Home",
+		"login":"Login",
+		"language":"Language"
+	},
+	"sidebar":{
+		"home":"Home",
+		"tournaments":"Tournaments",
+		"messages":"Messages",
+		"games":"Games",
+		"settings":"Settings"
+	},
+	"pages":{
+		"dashboard":"Dashboard",
+		"home":"Home",
+		"tournaments":"Tournaments",
+		"messages":"Messages",
+		"games":"Games",
+		"settings":"Settings"
+	},
+	"profile":{
+		"id":"Id",
+		"email":"Email",
+		"username":"Username",
+		"status":"Status",
+		"alias":"Alias",
+		"aliasbtn":"Set New Alias",
+		"quickactions": "Quick Actions",
+		"playerstats": {
+			"title": "Player Stats",
+			"description": "View your game statistics"
+		},
+		"matchstats": {
+			"title": "Match Stats", 
+			"description": "View detailed match history"
+		},
+		"logout": {
+			"title": "Logout",
+			"description": "Sign out of your account"
+		}
+	},
+	"home":{
+		"title":"Experience the classic game with 4 unique visual themes",
+		"inspiration":"Inspired by traditional Japanese aesthetics with washi paper textures and torii gate design elements.",
+		"japanese":"Japanese Zen",
+		"pacman":"Pacman Arcade",
+		"arcade":"Retro Arcade",
+		"space":"Space Odyssey",
+		"play":"Play Game",
+		"settings":"Settings",
+		"theme": "Theme",
+		"active": "Active Games"
+	},
+	"gamesettings":{
+		"head": "Game Settings",
+		"speed":{
+			"label": "Ball Speed",
+			"slow": "slow",
+			"normal": "normal",
+			"fast": "fast"
+		},
+		"canvashape":{
+			"label": "Canvas Shape",
+			"rectangle": "Rectangle",
+			"square": "Square",
+			"wide": "Wide"
+		},
+		"score":{
+			"label": "Score to Win",
+			"points": "Points"
+		},
+		"button": "Reset to Default"
+	},
+	"gameselection":{
+		"title": "Select Game Mode",
+		"subtitle": "Choose how you want to play",
+		"modes": {
+			"local": {
+				"title": "Local Game",
+				"description": "Play locally with friends"
+			},
+			"online": {
+				"title": "Online Game",
+				"description": "Play against remote opponents"
+			},
+			"cli": {
+				"title": "Command Line",
+				"description": "Play via terminal commands"
+			}
+		}
+	},
+	"tournamentselection":{
+		"title": "Tournament Options",
+		"subtitle": "Choose what you want to access",
+		"modes": {
+			"events": {
+				"title": "Events",
+				"description": "View and join upcoming events"
+			},
+			"results": {
+				"title": "Tournament Results",
+				"description": "View past tournament results and standings"
+			}
+		}
+	}
+}
