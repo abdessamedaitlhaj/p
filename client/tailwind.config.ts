@@ -94,27 +94,15 @@ export default {
           accent: "#f97316",
           text: "#f8fafc",
         },
-        gray_1: {
-          DEFAULT: "#252525",
-        },
-        gray_2: {
-          DEFAULT: "#292929",
-        },
-        gray_3: {
-          DEFAULT: "#474747",
-        },
-        yellow_1: {
-          DEFAULT: "#FFEA00",
-        },
-        yellow_2: {
-          DEFAULT: "#FFF70B",
-        },
-        text_dark: {
-          DEFAULT: "#232222",
-        },
-        text_yellow: {
-          DEFAULT: "#A9911A",
-        },
+        gray_1: "#252525",
+        gray_2: "#292929",
+        gray_3: "#474747",
+        yellow_1: "#FFEA00",
+        yellow_2: "#FFF70B",
+        yellow_3: "#A9911A",
+        text_dark: "#232222",
+        input_color: "#6D6D6D",
+        avatar_color: "#D9D9D9",
       },
       borderRadius: {
         lg: "var(--radius)",

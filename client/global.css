@@ -2,23 +2,22 @@
 
 /* @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Orbitron:wght@400;700;900&display=swap'); */
 
-@import url('https://fonts.googleapis.com/css2?family=Zen+Dots&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Zen+Dots&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-
 * {
-  font-family: 'Zen Dots';
+  font-family: "Zen Dots";
 }
 .scrollbar-hidden {
   -ms-overflow-style: none; /* IE/Edge */
   scrollbar-width: none; /* Firefox */
 }
 
-
 /* global.css */
-body, html {
+body,
+html {
   margin: 0;
   padding: 0;
   height: 100%;
@@ -45,7 +44,6 @@ main {
   flex-grow: 1;
   overflow-y: hidden;
 }
-
 
 @layer base {
   /**
@@ -152,8 +150,7 @@ main {
 
 @layer utilities {
   .bg-japanese-pattern {
-    background-image:
-      radial-gradient(
+    background-image: radial-gradient(
         circle at 20% 20%,
         rgba(220, 38, 38, 0.1) 0%,
         transparent 50%
@@ -166,8 +163,7 @@ main {
   }
 
   .bg-arcade-pattern {
-    background-image:
-      repeating-linear-gradient(
+    background-image: repeating-linear-gradient(
         45deg,
         rgba(220, 38, 38, 0.1),
         rgba(220, 38, 38, 0.1) 20px,
@@ -184,8 +180,7 @@ main {
   }
 
   .bg-space-stars {
-    background-image:
-      radial-gradient(2px 2px at 20% 30%, #eee, transparent),
+    background-image: radial-gradient(2px 2px at 20% 30%, #eee, transparent),
       radial-gradient(2px 2px at 80% 20%, #fff, transparent),
       radial-gradient(1px 1px at 30% 70%, #fff, transparent),
       radial-gradient(1px 1px at 70% 80%, #fff, transparent),
