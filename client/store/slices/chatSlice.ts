@@ -11,10 +11,12 @@ export interface Message {
 
 export interface ChatSlice {
   messages: Message[];
+  conversation: Message[];
   unreadCounts: Record<string, number>;
   conversationOrder: string[];
   selectedUser: User | null;
   setMessages: (messages: Message[]) => void;
+  setConversation: (messages: Message[]) => void;
   addMessage: (msg: Message, currentUserId?: string) => void;
   incrementUnreadCount: (userId: string) => void;
   resetUnreadCount: (userId: string) => void;
@@ -28,10 +30,12 @@ export const createChatSlice: StateCreator<ChatSlice, [], [], ChatSlice> = (
   get
 ) => ({
   messages: [],
+  conversation: [],
   unreadCounts: {},
   conversationOrder: [],
   selectedUser: null,
   setMessages: (messages) => set({ messages }),
+  setConversation: (conversation) => set({ conversation }),
   updateConversationOrder: (userId) =>
     set((s) => ({
       conversationOrder: [
@@ -57,14 +61,13 @@ export const createChatSlice: StateCreator<ChatSlice, [], [], ChatSlice> = (
     const selected = get().selectedUser;
     if (String(message.sender_id) !== String(selected?.id))
       get().incrementUnreadCount(message.sender_id);
-    set((s) => ({ messages: [...s.messages, message] }));
+    set((s) => ({ conversation: [...s.conversation, message] }));
   },
   setSelectedUser: (user) => {
     if (user) get().resetUnreadCount(user.id);
     set({ selectedUser: user });
   },
   loadConversation: async (otherUserId: string) => {
-    console.log("convosssssssssss");
     const state = get();
     const currentUserId = (state as any).user?.id;
     if (!currentUserId) return;
@@ -73,8 +76,7 @@ export const createChatSlice: StateCreator<ChatSlice, [], [], ChatSlice> = (
         `/messages/conversation/${currentUserId}/${otherUserId}`
       );
       if (!res) return;
-      const data = await res.json();
-      state.setMessages(data.messages || []);
+      state.setConversation(res.data.messages || []);
     } catch {}
   },
 });

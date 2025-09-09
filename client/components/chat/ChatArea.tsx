@@ -1,77 +1,181 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useStore } from "../../store/useStore";
 import { toast } from "react-hot-toast";
 import moment from "moment";
+import {
+  EllipsisVertical,
+  MessageCircle,
+  MessageSquare,
+  Send,
+} from "lucide-react";
+import { Input } from "./Input";
 
 export const ChatArea = () => {
-  const { socket, user, selectedUser, messages, lockedUsers }: any = useStore();
+  const {
+    socket,
+    user,
+    selectedUser,
+    conversation,
+    loadConversation,
+    lockedUsers,
+  }: any = useStore();
   const messagesEndRef = useRef<HTMLDivElement>(null);
-
-  const chatMessages = messages.filter((msg) => {
-    const isFromUser =
-      String(msg.sender_id) === String(user?.id) &&
-      String(msg.receiver_id) === String(selectedUser?.id);
-    const isToUser =
-      String(msg.receiver_id) === String(user?.id) &&
-      String(msg.sender_id) === String(selectedUser?.id);
-
-    return isFromUser || isToUser;
-  });
+  const [isToggle, setToggle] = useState(false);
+  const [isTyping, setTyping] = useState(false);
 
   useEffect(() => {
     if (!socket || !user) return;
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [socket, user, chatMessages]);
+  }, [socket, user, conversation, isTyping]);
+
+  useEffect(() => {
+    if (!socket || !user) {
+      console.log("Socket or user not available");
+      return;
+    }
+
+    socket.on("typing", () => setTyping(true));
+    socket.on("stop_typing", () => setTyping(false));
+
+    return () => {
+      socket.off("typing");
+      socket.off("stop_typing");
+    };
+  }, [socket, user, selectedUser]);
+
+  useEffect(() => {
+    if (selectedUser?.id && user?.id) {
+      loadConversation(selectedUser.id);
+    }
+    setTyping(false);
+  }, [selectedUser, user, loadConversation]);
+
+  const formatTimeDifference = (timestamp) => {
+    // Parse the ISO timestamp string properly
+    const messageDate = new Date(timestamp);
+    const now = new Date();
+    const diffMs = now.getTime() - messageDate.getTime();
+    const diffSeconds = Math.floor(diffMs / 1000);
+
+    if (diffSeconds < 60) return "Now";
+
+    const diffMinutes = Math.floor(diffSeconds / 60);
+    if (diffMinutes < 60) return `${diffMinutes}m`;
+
+    const diffHours = Math.floor(diffMinutes / 60);
+    if (diffHours < 24) return `${diffHours}h`;
+
+    const diffDays = Math.floor(diffHours / 24);
+    if (diffDays < 365) return `${diffDays}d`;
+
+    const diffYears = Math.floor(diffDays / 365);
+    return `${diffYears}y`;
+  };
 
   return (
     <>
-      {selectedUser && lockedUsers?.[String(selectedUser.id)]?.inMatch && (
-        <div className="flex items-center gap-2 px-2 py-1 text-[10px] text-red-600 font-semibold">
-          <span className="inline-block w-2 h-2 rounded-full bg-red-500" /> In game
-        </div>
-      )}
-      {chatMessages.map((msg, index) => {
-        const isFromCurrentUser = String(msg.sender_id) === String(user?.id);
-
-        return (
-          <div
-            key={`${msg.sender_id}-${msg.receiver_id}-${msg.timestamp}-${index}`}
-            className={`flex p-1 gap-2 ${
-              isFromCurrentUser ? "justify-end" : "justify-start"
-            }`}
-          >
-            {!isFromCurrentUser && (
-              <div className="self-end">
-                <img
-                  src={selectedUser?.avatarurl}
-                  alt="Profile"
-                  className="size-6 rounded-full"
-                />
-              </div>
-            )}
-
-            <div
-              className={`min-w-0 max-w-[70%] rounded-2xl p-2 ${
-                isFromCurrentUser
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-200 text-gray-700"
-              }`}
-            >
-              <p className="text-xs break-words whitespace-pre-wrap">
-                {msg.text}
-              </p>
-              <p
-                className={`text-[10px] text-end ${
-                  isFromCurrentUser ? "text-blue-100" : "text-gray-500"
+      <div className="flex-1 overflow-y-auto p-4 min-h-0 scrollbar-hidden">
+        <div className="flex flex-col gap-4">
+          {conversation.map((msg, index) => {
+            const isFromCurrentUser =
+              String(msg.sender_id) === String(user?.id);
+            return (
+              <div
+                key={index}
+                className={`flex items-center gap-4 ${
+                  isFromCurrentUser ? "justify-end" : "justify-start"
                 }`}
               >
-                {moment(msg.timestamp).fromNow()}
-              </p>
+                {!isFromCurrentUser && (
+                  <div className="relative flex-shrink-0">
+                    <img
+                      src={user?.avatarurl}
+                      alt="Profile"
+                      className="size-10 rounded-full"
+                    />
+                  </div>
+                )}
+                <div
+                  className={`max-w-[300px] rounded-2xl p-3 ${
+                    isFromCurrentUser ? "bg-yellow_3" : "bg-gray_1"
+                  }`}
+                >
+                  <p className="text-sm mb-4 text-wrap text-white">
+                    {msg.text}
+                  </p>
+                  <p className="text-[10px] text-end m-0 text-white/70">
+                    {formatTimeDifference(msg.timestamp)}
+                  </p>
+                </div>
+              </div>
+            );
+          })}
+          {isTyping && (
+            <div className="flex space-x-1 pl-1 pt-6">
+              <span className="size-2 bg-white/50 rounded-full animate-bounce" />
+              <span
+                className="size-2 bg-white/50 rounded-full animate-bounce"
+                style={{ animationDelay: "0.12s" }}
+              />
+              <span
+                className="size-2 bg-white/50 rounded-full animate-bounce"
+                style={{ animationDelay: "0.24s" }}
+              />
             </div>
-          </div>
-        );
-      })}
-      <div ref={messagesEndRef} />
+          )}
+          <div ref={messagesEndRef} />
+        </div>
+      </div>
+      <Input />
     </>
+    // <>
+    //   {selectedUser && lockedUsers?.[String(selectedUser.id)]?.inMatch && (
+    //     <div className="flex items-center gap-2 px-2 py-1 text-[10px] text-red-600 font-semibold">
+    //       <span className="inline-block w-2 h-2 rounded-full bg-red-500" /> In game
+    //     </div>
+    //   )}
+    //   {chatMessages.map((msg, index) => {
+    //     const isFromCurrentUser = String(msg.sender_id) === String(user?.id);
+
+    //     return (
+    //       <div
+    //         key={`${msg.sender_id}-${msg.receiver_id}-${msg.timestamp}-${index}`}
+    //         className={`flex p-1 gap-2 ${
+    //           isFromCurrentUser ? "justify-end" : "justify-start"
+    //         }`}
+    //       >
+    //         {!isFromCurrentUser && (
+    //           <div className="self-end">
+    //             <img
+    //               src={selectedUser?.avatarurl}
+    //               alt="Profile"
+    //               className="size-6 rounded-full"
+    //             />
+    //           </div>
+    //         )}
+
+    //         <div
+    //           className={`min-w-0 max-w-[70%] rounded-2xl p-2 ${
+    //             isFromCurrentUser
+    //               ? "bg-blue-500 text-white"
+    //               : "bg-gray-200 text-gray-700"
+    //           }`}
+    //         >
+    //           <p className="text-xs break-words whitespace-pre-wrap">
+    //             {msg.text}
+    //           </p>
+    //           <p
+    //             className={`text-[10px] text-end ${
+    //               isFromCurrentUser ? "text-blue-100" : "text-gray-500"
+    //             }`}
+    //           >
+    //             {moment(msg.timestamp).fromNow()}
+    //           </p>
+    //         </div>
+    //       </div>
+    //     );
+    //   })}
+    //   <div ref={messagesEndRef} />
+    // </>
   );
 };

@@ -92,16 +92,14 @@ export function registerSocketHandlers(app: FastifyInstance) {
         return;
       }
       
-      const timestamp = new Date().toISOString();
       try { 
         const { createMessage } = await import('../models/Message'); 
-        await createMessage({ sender_id: Number(senderId), receiver_id: Number(receiverId), text: payload.text }); 
+        await createMessage({ sender_id: Number(senderId), receiver_id: Number(receiverId), content: payload.text }); 
       } catch (e) { 
         console.error('save message failed', e); 
       }
-      const enriched = { ...payload, timestamp };
-      app.io.to(senderId).emit('receive_message', enriched); 
-      app.io.to(receiverId).emit('receive_message', enriched);
+      app.io.to(senderId).emit('receive_message', payload); 
+      app.io.to(receiverId).emit('receive_message', payload);
     });
 
     // Deprecated explicit logout: status now driven purely by active socket presence.

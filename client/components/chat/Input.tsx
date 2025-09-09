@@ -79,18 +79,25 @@ export const Input = () => {
   };
 
   return (
-    <div className="flex items-center space-x-2">
-      <input
-        onKeyDown={handleKeyDown}
-        value={newMessage}
-        onChange={handleInputChange}
-        type="text"
-        placeholder="Message..."
-        className="text-gray-600 w-80 placeholder-gray-400 border border-gray-300 rounded-md px-2 py-1 focus:outline-none"
-      />
-      <button onClick={handleSendMessage} className="cursor-pointer">
-        <Send className="text-gray-400 size-5 hover:text-gray-600 transition duration-600 ease-in-out" />
-      </button>
+    <div className="flex-shrink-0 p-4">
+      <div className="bg-input_color/60 p-3 rounded-2xl">
+        <div className="flex w-full items-center gap-2">
+          <input
+            onKeyDown={handleKeyDown}
+            value={newMessage}
+            onChange={handleInputChange}
+            type="text"
+            className="flex-1 p-2 placeholder-white focus:outline-none bg-transparent"
+            placeholder="message..."
+          />
+          <button
+            onClick={handleSendMessage}
+            className="self-end p-2 hover:bg-gray_3/80 hover:rounded-full"
+          >
+            <Send className="text-white" />
+          </button>
+        </div>
+      </div>
     </div>
   );
 };
