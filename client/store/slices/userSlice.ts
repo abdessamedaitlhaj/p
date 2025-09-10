@@ -1,7 +1,7 @@
 import { StateCreator } from 'zustand';
 
 export interface User {
-  id: string; username: string; email: string; avatarurl?: string; status: string; lastSeen?: string | null; createdAt: string;
+  id: number; username: string; email: string; avatarurl?: string; status: string; lastSeen?: string | null; createdAt: string;
 }
 
 export interface UserSlice { user: User | null; setUser: (user: User | null) => void; }

@@ -1,6 +1,7 @@
 import { resolve } from 'path';
 import { db } from '../db/db.ts';
 import { ensurePlayerStats } from './PlayerStats';
+import { User } from "@/types/types.ts"
 
 export const USER_STATUS = {
 	ACTIVE: 'in_game',
@@ -36,19 +37,6 @@ db.serialize(() => {
 	);
 
 });
-
-// Define a User type for better typing
-export interface User {
-		id: number;
-		username: string;
-		password: string;
-		email: string;
-		avatar_url?: string | null;
-		refreshToken?: string | null;
-		status: typeof USER_STATUS[keyof typeof USER_STATUS];
-		last_seen?: string | null;
-		createdAt: string;
-}
 
 // Helper functions
 export const findByEmailOrUsername = (

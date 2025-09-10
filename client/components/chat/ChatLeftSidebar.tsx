@@ -1,43 +1,66 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useStore } from "../../store/useStore";
 import { useUsers } from "../../store/useUsers";
 import { queryClient } from "@/App";
 import { M } from "vite/dist/node/moduleRunnerTransport.d-DJ_mE5sf";
 import { Ban, Search } from "lucide-react";
 import moment from "moment";
-interface User {
-  id: string;
-  username: string;
-  email: string;
-  avatarurl?: string;
-  status: string;
-  last_seen?: string | null;
-  createdAt: string;
-}
+import { User } from "@/types/types";
 
 export const ChatLeftSidebar = () => {
   const { data, isLoading } = useUsers();
   const setSelectedUser = useStore((state) => state.setSelectedUser);
   const {
     user,
+    users,
+    updateUser,
+    setUsers,
+    setOnlineUsers,
     socket,
     onlineUsers,
     unreadCounts,
     conversationOrder,
     lockedUsers,
-  } = useStore() as any;
+  } = useStore();
 
-  const filtredUsers = data?.filter(
-    (u) => user?.id && String(u.id) !== String(user.id)
-  );
+  const [currentTime, setCurrentTime] = useState(Date.now());
 
-  // console.log("FISRT usssser timstamp: ", filtredUsers[0].last_seen);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(Date.now());
+    }, 60000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    if (data && user?.id) {
+      const filteredUsers = data?.filter(
+        (u) => String(u.id) !== String(user.id)
+      );
+      setUsers(filteredUsers);
+    }
+  }, [data, user?.id, setUsers]);
+
+  const orderMap = new Map();
+  conversationOrder.forEach((id, index) => {
+    orderMap.set(id, index);
+  });
+
+  const sortedUsers = users.sort((a, b) => {
+    const indexA = orderMap.get(String(a.id)) ?? Infinity;
+    const indexB = orderMap.get(String(b.id)) ?? Infinity;
+
+    return indexA - indexB;
+  });
 
   const formatTimeDifference = (timestamp) => {
-    const diffMs = Date.now() - parseInt(timestamp);
+    const messageDate = new Date(timestamp);
+    const now = new Date(currentTime);
+    const diffMs = now.getTime() - messageDate.getTime();
     const diffSeconds = Math.floor(diffMs / 1000);
 
-    if (diffSeconds < 60) return `${diffSeconds}s`;
+    if (diffSeconds < 60) return "Now";
 
     const diffMinutes = Math.floor(diffSeconds / 60);
     if (diffMinutes < 60) return `${diffMinutes}m`;
@@ -51,6 +74,23 @@ export const ChatLeftSidebar = () => {
     const diffYears = Math.floor(diffDays / 365);
     return `${diffYears}y`;
   };
+
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleUserStatusUpdate = (data) => {
+      updateUser(data.userId, {
+        status: data.status,
+        last_seen: data.last_seen,
+      });
+    };
+
+    socket.on("user_status_updated", handleUserStatusUpdate);
+
+    return () => {
+      socket.off("user_status_updated", handleUserStatusUpdate);
+    };
+  }, [socket, updateUser, setOnlineUsers]);
 
   return (
     <div className="flex flex-col w-full md:w-1/4">
@@ -68,8 +108,8 @@ export const ChatLeftSidebar = () => {
       <div className="bg-gray_3/80 p-4 mt-4 h-[200px] md:flex-1 rounded-2xl overflow-y-auto scrollbar-hidden">
         <div className="flex flex-col space-y-2">
           {isLoading ? <p>Loading...</p> : null}
-          {filtredUsers?.map((user: User) => {
-            const unreadCount = filtredUsers[user.id] || 0;
+          {sortedUsers?.map((user: User) => {
+            const unreadCount = unreadCounts[user.id] || 0;
             return (
               <div
                 className={`flex items-center p-3 rounded-2xl cursor-pointer transition-colors duration-200 hover:bg-gray_1`}
@@ -95,9 +135,19 @@ export const ChatLeftSidebar = () => {
                           ? "Online"
                           : formatTimeDifference(user.last_seen)}
                       </span>
-                      <div className="w-5 h-5 bg-yellow_3 rounded-full flex items-center justify-center">
-                        <span className="text-black text-xs font-bold">4</span>
-                      </div>
+                      {unreadCount > 0 ? (
+                        <div
+                          className={`size-6 bg-yellow_4 rounded-full flex items-center justify-center`}
+                        >
+                          <span
+                            className={`text-black  ${
+                              unreadCount > 99 ? "text-[8px]" : "text-[10px]"
+                            } font-bold`}
+                          >
+                            {unreadCount > 99 ? "+99" : unreadCount}
+                          </span>
+                        </div>
+                      ) : null}
                     </div>
                   </div>
                 </div>
@@ -144,61 +194,5 @@ export const ChatLeftSidebar = () => {
         </div>
       </div>
     </div>
-
-    // <div className="flex flex-col overflow-y-auto scrollbar-hidden border border-gray-300 rounded-md w-full">
-    //   {filtredUsers?.map((user: User) => {
-    //     const unreadCount = filtredUsers[user.id] || 0;
-
-    //     return (
-    //       <div
-    //         key={user.id}
-    //         onClick={() => setSelectedUser(user)}
-    //         className="relative flex items-center justify-between gap-4 p-4 hover:bg-gray-200 cursor-pointer"
-    //       >
-    //         <div className="flex gap-4">
-    //           <div className="relative">
-    //             <img
-    //               src={user?.avatarurl}
-    //               alt="Profile"
-    //               className="w-8 h-8 rounded-full"
-    //             />
-    //             <span
-    //               className={`absolute bottom-0 right-0 ring-2 ring-white w-2 h-2 rounded-full ${
-    //                 lockedUsers?.[String(user.id)]?.inMatch
-    //                   ? 'bg-red-500'
-    //                   : onlineUsers.includes(String(user.id))
-    //                     ? 'bg-green-500'
-    //                     : 'bg-gray-400'
-    //               }`}
-    //             />
-    //             {/* Unread count badge */}
-    //             {unreadCount > 0 && (
-    //               <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold rounded-full min-w-[16px] h-4 flex items-center justify-center px-1">
-    //                 {unreadCount > 99 ? "99+" : unreadCount}
-    //               </span>
-    //             )}
-    //           </div>
-    //           <div>
-    //             <p
-    //               className={`text-xs ${
-    //                 unreadCount > 0
-    //                   ? "text-gray-900 font-semibold"
-    //                   : "text-gray-700"
-    //               }`}
-    //             >
-    //               {user.username}
-    //             </p>
-    //             <p className="text-[10px] text-gray-500 truncate">
-    //               Hi what is your op
-    //             </p>
-    //           </div>
-    //         </div>
-    //         <span className="text-[10px] text-gray-400">
-    //           {!user.last_seen ? new Date().getHours() + " h" : null}
-    //         </span>
-    //       </div>
-    //     );
-    //   })}
-    // </div>
   );
 };

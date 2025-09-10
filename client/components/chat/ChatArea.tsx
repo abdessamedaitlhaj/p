@@ -35,8 +35,12 @@ export const ChatArea = () => {
       return;
     }
 
-    socket.on("typing", () => setTyping(true));
-    socket.on("stop_typing", () => setTyping(false));
+    socket.on("typing", (sid) => {
+      if (String(sid) === String(selectedUser.id)) setTyping(true);
+    });
+    socket.on("stop_typing", (sid) => {
+      if (String(sid) === String(selectedUser.id)) setTyping(false);
+    });
 
     return () => {
       socket.off("typing");
@@ -52,7 +56,6 @@ export const ChatArea = () => {
   }, [selectedUser, user, loadConversation]);
 
   const formatTimeDifference = (timestamp) => {
-    // Parse the ISO timestamp string properly
     const messageDate = new Date(timestamp);
     const now = new Date();
     const diffMs = now.getTime() - messageDate.getTime();
@@ -105,13 +108,11 @@ export const ChatArea = () => {
                   </div>
                 )}
                 <div
-                  className={`max-w-[300px] rounded-2xl p-3 ${
+                  className={`max-w-[300px] break-words  rounded-2xl p-3 ${
                     isFromCurrentUser ? "bg-yellow_3" : "bg-gray_1"
                   }`}
                 >
-                  <p className="text-sm mb-4 text-wrap text-white">
-                    {msg.text}
-                  </p>
+                  <p className="text-sm mb-4  text-white">{msg.text}</p>
                   <p className="text-[10px] text-end m-0 text-white/70">
                     {formatTimeDifference(msg.timestamp)}
                   </p>
@@ -137,54 +138,5 @@ export const ChatArea = () => {
       </div>
       <Input />
     </>
-    // <>
-    //   {selectedUser && lockedUsers?.[String(selectedUser.id)]?.inMatch && (
-    //     <div className="flex items-center gap-2 px-2 py-1 text-[10px] text-red-600 font-semibold">
-    //       <span className="inline-block w-2 h-2 rounded-full bg-red-500" /> In game
-    //     </div>
-    //   )}
-    //   {chatMessages.map((msg, index) => {
-    //     const isFromCurrentUser = String(msg.sender_id) === String(user?.id);
-
-    //     return (
-    //       <div
-    //         key={`${msg.sender_id}-${msg.receiver_id}-${msg.timestamp}-${index}`}
-    //         className={`flex p-1 gap-2 ${
-    //           isFromCurrentUser ? "justify-end" : "justify-start"
-    //         }`}
-    //       >
-    //         {!isFromCurrentUser && (
-    //           <div className="self-end">
-    //             <img
-    //               src={selectedUser?.avatarurl}
-    //               alt="Profile"
-    //               className="size-6 rounded-full"
-    //             />
-    //           </div>
-    //         )}
-
-    //         <div
-    //           className={`min-w-0 max-w-[70%] rounded-2xl p-2 ${
-    //             isFromCurrentUser
-    //               ? "bg-blue-500 text-white"
-    //               : "bg-gray-200 text-gray-700"
-    //           }`}
-    //         >
-    //           <p className="text-xs break-words whitespace-pre-wrap">
-    //             {msg.text}
-    //           </p>
-    //           <p
-    //             className={`text-[10px] text-end ${
-    //               isFromCurrentUser ? "text-blue-100" : "text-gray-500"
-    //             }`}
-    //           >
-    //             {moment(msg.timestamp).fromNow()}
-    //           </p>
-    //         </div>
-    //       </div>
-    //     );
-    //   })}
-    //   <div ref={messagesEndRef} />
-    // </>
   );
 };

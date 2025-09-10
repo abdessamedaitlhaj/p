@@ -88,10 +88,10 @@ export function registerSocketHandlers(app: FastifyInstance) {
       }
     });
 
-    socket.on("stop_typing", (rid) =>
-      app.io.to(String(rid)).emit("stop_typing")
+    socket.on("stop_typing", (data) =>
+      app.io.to(String(data.rid)).emit("stop_typing", data.sid)
     );
-    socket.on("istyping", (rid) => app.io.to(String(rid)).emit("typing"));
+    socket.on("istyping", (data) => app.io.to(String(data.rid)).emit("typing", data.sid));
 
     socket.on("send_message", async (payload) => {
       const senderId = String(payload.sender_id);
@@ -320,13 +320,11 @@ export function registerSocketHandlers(app: FastifyInstance) {
           return;
         }
         for (const s of sockets) {
-          app.io
-            .to(s.id)
-            .emit("receive_invite", {
-              inviter: inviterInfo,
-              inviterId,
-              inviteId,
-            });
+          app.io.to(s.id).emit("receive_invite", {
+            inviter: inviterInfo,
+            inviterId,
+            inviteId,
+          });
         }
         app.io.to(inviterId).emit("invite_sent", { to: targetId, inviteId });
       } catch (e) {
@@ -420,12 +418,10 @@ export function registerSocketHandlers(app: FastifyInstance) {
           app.io
             .to(payload.inviterId)
             .emit("invite_consumed", { by: accepterId, inviteId });
-          app.io
-            .to(accepterId)
-            .emit("invite_consumed", {
-              inviterId: payload.inviterId,
-              inviteId,
-            });
+          app.io.to(accepterId).emit("invite_consumed", {
+            inviterId: payload.inviterId,
+            inviteId,
+          });
         } catch (e) {
           socket.emit("error", "Failed to create game");
           inviterSocket.emit("error", "Failed to create game");
@@ -439,11 +435,9 @@ export function registerSocketHandlers(app: FastifyInstance) {
           ([_, uid]) => uid === payload.inviterId
         )?.[0];
         if (inviterSocketId)
-          app.io.sockets.sockets
-            .get(inviterSocketId)
-            ?.emit("invite_declined", {
-              declinerId: socketToUser.get(socket.id),
-            });
+          app.io.sockets.sockets.get(inviterSocketId)?.emit("invite_declined", {
+            declinerId: socketToUser.get(socket.id),
+          });
         const declinerId = socketToUser.get(socket.id);
         if (declinerId) {
           // capture inviteId BEFORE clearing
@@ -783,7 +777,7 @@ export function registerSocketHandlers(app: FastifyInstance) {
             await new Promise<void>((resolve, reject) => {
               db.run(
                 "UPDATE users SET status = ?, last_seen = ? WHERE id = ?",
-                ["offline", new Date(), userId],
+                ["offline", new Date().toISOString(), userId],
                 function (err) {
                   if (err) reject(err);
                   else resolve();
@@ -793,6 +787,11 @@ export function registerSocketHandlers(app: FastifyInstance) {
             const idx = onlineUsers.indexOf(userId);
             if (idx !== -1) onlineUsers.splice(idx, 1);
             app.io.emit("user_offline", onlineUsers);
+            app.io.emit("user_status_updated", {
+              userId,
+              status: "offline",
+              last_seen: new Date().toISOString(),
+            });
           } catch (e) {
             console.error("offline update failed", e);
           }

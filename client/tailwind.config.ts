@@ -100,6 +100,7 @@ export default {
         yellow_1: "#FFEA00",
         yellow_2: "#FFF70B",
         yellow_3: "#A9911A",
+        yellow_4: "#EBCA24",
         text_dark: "#232222",
         input_color: "#6D6D6D",
         avatar_color: "#D9D9D9",

@@ -3,14 +3,13 @@ import { Send } from "lucide-react";
 import { useStore } from "../../store/useStore";
 import { stat } from "fs";
 
-interface Message {
-  sender_id: string;
+export type Message = {
+  sender_id: number;
   sender_avatarurl?: string;
-
-  receiver_id: string;
+  receiver_id: number;
   text: string;
-  timestamp: string; // ISO string
-}
+  timestamp: string;
+};
 
 export const Input = () => {
   const [newMessage, setNewMessage] = useState("");
@@ -23,7 +22,7 @@ export const Input = () => {
 
     if (socket && selectedUser && e.target.value.trim() !== "") {
       if (!isTypingRef.current) {
-        socket.emit("istyping", selectedUser.id);
+        socket.emit("istyping", { rid: selectedUser.id, sid: user.id });
         isTypingRef.current = true;
       }
       if (typingTimeoutRef.current) {
@@ -32,13 +31,13 @@ export const Input = () => {
 
       typingTimeoutRef.current = setTimeout(() => {
         if (socket && selectedUser) {
-          socket.emit("stop_typing", selectedUser.id);
+          socket.emit("stop_typing", { rid: selectedUser.id, sid: user.id });
           isTypingRef.current = false;
         }
       }, 2000);
     } else if (e.target.value.trim() === "" && isTypingRef.current) {
       if (socket && selectedUser) {
-        socket.emit("stop_typing", selectedUser.id);
+        socket.emit("stop_typing", { rid: selectedUser.id, sid: user.id });
         isTypingRef.current = false;
       }
       if (typingTimeoutRef.current) {
@@ -56,7 +55,7 @@ export const Input = () => {
     e.preventDefault();
 
     if (isTypingRef.current) {
-      socket.emit("stop_typing", selectedUser.id);
+      socket.emit("stop_typing", { rid: selectedUser.id, sid: user.id });
       isTypingRef.current = false;
     }
     if (typingTimeoutRef.current) {
