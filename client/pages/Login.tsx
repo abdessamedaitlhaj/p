@@ -28,9 +28,7 @@ const Login = () => {
 
   const setUser = useStore((state) => state.setUser);
 
-  useEffect(() => {
-
-  }, []);
+  useEffect(() => {}, []);
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     dispatch({ type: "Start_Login" });
@@ -49,7 +47,6 @@ const Login = () => {
       localStorage.setItem("persist", JSON.stringify(true));
       setPersist(true); //persist login
       dispatch({ type: "Success_Login", payload: res.data });
-
 
       setUserData(res.data);
       setUser(res.data.user);
@@ -75,7 +72,7 @@ const Login = () => {
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setUsername(e.target.value)
           }
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-4 py-2 border border-gray-300 text-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
 
         <input
@@ -86,7 +83,7 @@ const Login = () => {
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setEmail(e.target.value)
           }
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
 
         <input
@@ -97,7 +94,7 @@ const Login = () => {
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setPassword(e.target.value)
           }
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
           required
         />
 

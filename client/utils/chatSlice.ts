@@ -1,9 +1,10 @@
 import { StateCreator } from "zustand";
 import { User } from "./userSlice";
-import api from '../../utils/axios';
+import api from "../../utils/axios";
 
 export interface Message {
   sender_id: string;
+  sender_avatarurl?: string;
   receiver_id: string;
   content: string;
   timestamp: string;
@@ -20,7 +21,10 @@ export interface ChatSlice {
   resetUnreadCount: (userId: string) => void;
   updateConversationOrder: (userId: string) => void;
   setSelectedUser: (u: User) => void;
-  loadConversation: (otherUserId: string, accessToken?: string) => Promise<void>;
+  loadConversation: (
+    otherUserId: string,
+    accessToken?: string
+  ) => Promise<void>;
 }
 
 export const createChatSlice: StateCreator<ChatSlice, [], [], ChatSlice> = (
@@ -67,32 +71,37 @@ export const createChatSlice: StateCreator<ChatSlice, [], [], ChatSlice> = (
     const state = get();
     const currentUserId = (state as any).user?.id;
     if (!currentUserId) {
-      console.log('No current user ID found');
+      console.log("No current user ID found");
       return;
     }
-    
+
     try {
-      console.log(`Loading conversation between ${currentUserId} and ${otherUserId}`);
-      console.log('Access token provided:', !!accessToken);
-      
+      console.log(
+        `Loading conversation between ${currentUserId} and ${otherUserId}`
+      );
+      console.log("Access token provided:", !!accessToken);
+
       // Add authorization header manually
       const headers: any = {};
       if (accessToken) {
         headers.Authorization = `Bearer ${accessToken}`;
       }
-      
-      const res = await api.get(`/messages/conversation/${currentUserId}/${otherUserId}`, {
-        headers
-      });
-      
+
+      const res = await api.get(
+        `/messages/conversation/${currentUserId}/${otherUserId}`,
+        {
+          headers,
+        }
+      );
+
       console.log("API response:", res.data);
       const messages = res.data.messages || [];
       console.log("Setting messages:", messages);
       state.setMessages(messages);
     } catch (error) {
-      console.error('Failed to load conversation:', error);
+      console.error("Failed to load conversation:", error);
       if (error.response?.status === 401) {
-        console.error('Authentication failed - token may be expired');
+        console.error("Authentication failed - token may be expired");
       }
     }
   },

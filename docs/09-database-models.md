@@ -491,7 +491,6 @@ CREATE TABLE IF NOT EXISTS messages (
 **Message Operations:**
 ```typescript
 export interface Message {
-  id: number;
   sender_id: number;
   receiver_id: number;
   text: string;

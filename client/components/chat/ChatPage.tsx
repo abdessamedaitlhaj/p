@@ -8,6 +8,7 @@ import { MessageSquare } from "lucide-react";
 
 interface Message {
   sender_id: string;
+  sender_avatarurl?: string;
   receiver_id: string;
   text: string;
   timestamp: Date;

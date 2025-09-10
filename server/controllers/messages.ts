@@ -131,6 +131,7 @@ export const getConversation = async (
 
     const formattedMessages = messages.map((msg) => ({
       sender_id: String(msg.sender_id),
+      sender_avatarurl: msg.sender_avatarurl,
       receiver_id: String(msg.receiver_id),
       text: msg.content,
       timestamp: msg.timestamp,

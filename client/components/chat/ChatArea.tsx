@@ -22,6 +22,7 @@ export const ChatArea = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [isToggle, setToggle] = useState(false);
   const [isTyping, setTyping] = useState(false);
+  const [isMultiple, setMultiple] = useState(true);
 
   useEffect(() => {
     if (!socket || !user) return;
@@ -79,6 +80,11 @@ export const ChatArea = () => {
           {conversation.map((msg, index) => {
             const isFromCurrentUser =
               String(msg.sender_id) === String(user?.id);
+
+            const isFirstMessageFromSender =
+              index === 0 ||
+              String(conversation[index - 1].sender_id) !==
+                String(msg.sender_id);
             return (
               <div
                 key={index}
@@ -88,11 +94,14 @@ export const ChatArea = () => {
               >
                 {!isFromCurrentUser && (
                   <div className="relative flex-shrink-0">
-                    <img
-                      src={user?.avatarurl}
-                      alt="Profile"
-                      className="size-10 rounded-full"
-                    />
+                    {isFirstMessageFromSender ? (
+                      <img
+                        src={msg.sender_avatarurl}
+                        className="size-10 rounded-full"
+                      />
+                    ) : (
+                      <div className="size-10" />
+                    )}
                   </div>
                 )}
                 <div

@@ -5,6 +5,8 @@ import { stat } from "fs";
 
 interface Message {
   sender_id: string;
+  sender_avatarurl?: string;
+
   receiver_id: string;
   text: string;
   timestamp: string; // ISO string
@@ -63,6 +65,7 @@ export const Input = () => {
 
     const message: Message = {
       sender_id: user.id,
+      sender_avatarurl: user.avatarurl,
       receiver_id: selectedUser.id,
       text: newMessage,
       timestamp: new Date().toISOString(),

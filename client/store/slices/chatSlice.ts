@@ -4,6 +4,7 @@ import api from "@/utils/Axios";
 
 export interface Message {
   sender_id: string;
+  sender_avatarurl?: string;
   receiver_id: string;
   text: string;
   timestamp: string;
