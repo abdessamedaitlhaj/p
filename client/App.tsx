@@ -18,11 +18,11 @@ import PlayerStatsPage from "./pages/PlayerStatsPage";
 import MatchStatsPage from "./pages/MatchStatsPage";
 import TournamentListPage from "./pages/TournamentListPage";
 import AuthCliPage from "./pages/AuthCliPage";
-import { Layout } from "./pages/Layout";
+import { Layout } from "./components/Layout/Layout";
 
 // live chat imports
 import { Toaster } from "react-hot-toast";
-import { ChatPage } from "@/components/chat/ChatPage";
+import { ChatPage } from "@/pages/ChatPage";
 import { ContextProvider } from "./context/Context";
 import { InviteNotification } from "@/components/InviteNotification";
 import { TournamentInviteCards } from "@/components/TournamentInviteCards";

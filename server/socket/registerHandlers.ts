@@ -4,6 +4,7 @@ import { tournamentManager } from "../tournamentManager";
 import { db } from "../db/db";
 import { activityManager } from "../activityManager";
 import type { GameSettingsWithTheme } from "../types";
+import { registerSocketChatHandlers } from "./registerSocketChatHandlers";
 
 // Shared per-process structures (scoped inside registration for isolation if needed)
 export function registerSocketHandlers(app: FastifyInstance) {
@@ -88,52 +89,7 @@ export function registerSocketHandlers(app: FastifyInstance) {
       }
     });
 
-    socket.on("stop_typing", (data) =>
-      app.io.to(String(data.rid)).emit("stop_typing", data.sid)
-    );
-    socket.on("istyping", (data) => app.io.to(String(data.rid)).emit("typing", data.sid));
-
-    socket.on("send_message", async (payload) => {
-      const senderId = String(payload.sender_id);
-      const receiverId = String(payload.receiver_id);
-
-      // Get the authenticated user ID
-      const authenticatedUserId = (socket as any).userId;
-
-      // Security check: user can only send messages as themselves
-      if (authenticatedUserId !== senderId) {
-        console.log(
-          `🚫 User ${authenticatedUserId} tried to send message as ${senderId}`
-        );
-        socket.emit("error", "Cannot send messages as another user");
-        return;
-      }
-
-      // Basic validation
-      if (!payload.text || typeof payload.text !== "string") {
-        socket.emit("error", "Message text is required");
-        return;
-      }
-
-      if (payload.text.length > 1000) {
-        socket.emit("error", "Message too long (max 1000 characters)");
-        return;
-      }
-
-      try {
-        const { createMessage } = await import("../models/Message");
-        await createMessage({
-          sender_id: Number(senderId),
-          sender_avatarurl: payload.sender_avatarurl,
-          receiver_id: Number(receiverId),
-          content: payload.text,
-        });
-      } catch (e) {
-        console.error("save message failed", e);
-      }
-      app.io.to(senderId).emit("receive_message", payload);
-      app.io.to(receiverId).emit("receive_message", payload);
-    });
+    registerSocketChatHandlers(app, socket, socketToUser);
 
     // Deprecated explicit logout: status now driven purely by active socket presence.
     socket.on("logout", async (_userId) => {

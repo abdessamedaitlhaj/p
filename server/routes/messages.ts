@@ -1,14 +1,22 @@
 // src/routes/messages.ts
-import type { FastifyInstance } from 'fastify';
-import { createMsg, getMessages, getConversation } from '../controllers/messages.ts';
-import { verifyToken } from '../middleware/verifyToken';
+import type { FastifyInstance } from "fastify";
+import {
+  createMessage,
+  getMessages,
+  getConversation,
+} from "../controllers/chat/messages.ts";
+import { verifyToken } from "../middleware/verifyToken";
 
 interface Params {
-    id: number;
+  id: number;
 }
 
 export async function MessageRoutes(fastify: FastifyInstance) {
-    fastify.get('/', { preHandler: verifyToken }, getMessages);
-    fastify.post('/', { preHandler: verifyToken }, createMsg);
-    fastify.get('/conversation/:userId/:otherUserId', { preHandler: verifyToken }, getConversation);
+  fastify.get("/", { preHandler: verifyToken }, getMessages);
+  fastify.post("/", { preHandler: verifyToken }, createMessage);
+  fastify.get(
+    "/conversation/:userId/:otherUserId",
+    { preHandler: verifyToken },
+    getConversation
+  );
 }

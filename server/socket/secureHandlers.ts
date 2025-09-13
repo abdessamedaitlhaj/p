@@ -126,7 +126,7 @@ export function registerSecureSocketHandlers(app: FastifyInstance) {
           const timestamp = new Date().toISOString();
           
           // Save message to database
-          const { createMessage } = await import('../models/Message');
+          const { createMessage } = await import('../models/chat/Message');
           await createMessage({
             sender_id: Number(senderId),
             receiver_id: Number(receiverId),

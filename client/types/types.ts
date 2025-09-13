@@ -17,8 +17,9 @@ export type Message = {
   sender_id: number;
   sender_avatarurl?: string;
   receiver_id: number;
-  text: string;
+  content: string;
   timestamp: string;
+  conversation_id: number;
 };
 
 export type UResponse = {

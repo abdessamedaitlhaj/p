@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { Link } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
 import {
   Trophy,
   Home,
@@ -10,14 +11,31 @@ import {
   Search,
   Menu,
 } from "lucide-react";
-import { Link } from "react-router-dom";
 import { useStore } from "@/store/useStore";
+import { Notification } from "@/components/Layout/Notification";
 
 export const Layout: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [searchValue, setSearchValue] = useState("");
   const { user } = useStore();
+
+  const [isToggle, setToggle] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        isToggle &&
+        menuRef.current &&
+        !menuRef.current.contains(event.target as Node)
+      ) {
+        setToggle(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isToggle]);
 
   return (
     <div className="min-h-screen bg-black/90 text-white">
@@ -49,9 +67,12 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({
             </div>
           </div>
 
-          <div className="flex items-center space-x-4">
+          <div className="relative flex items-center space-x-4">
             <span>{user?.username}</span>
-            <button className="hidden sm:flex justify-center items-center p-2 hover:bg-gray_1/70 rounded-full transition-colors border border-yellow_1 size-12 cursor-pointer">
+            <button
+              onClick={() => setToggle(!isToggle)}
+              className="hidden sm:flex justify-center items-center p-2 hover:bg-gray_1/70 rounded-full transition-colors border border-yellow_1 size-12 cursor-pointer"
+            >
               <Bell strokeWidth={2} className="size-6" />
             </button>
             <Link to="/profile">
@@ -62,6 +83,11 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({
             <button className="sm:hidden flex p-2 justify-center items-center hover:bg-gray_1/70 rounded-full transition-colors border border-yellow_1 size-12 cursor-pointer">
               <Menu strokeWidth={2} className="size-6" />
             </button>
+            <div ref={menuRef} className="absolute">
+              {isToggle && (
+                <Notification setToggle={setToggle} isToggle={isToggle} />
+              )}
+            </div>
           </div>
         </div>
       </nav>
@@ -109,7 +135,9 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({
         </div>
       </aside>
 
-      <main className="sm:ml-20 p-6">{children}</main>
+      <main className=" sm:ml-20 p-6 flex items-center justify-center">
+        {children}
+      </main>
     </div>
   );
 };
